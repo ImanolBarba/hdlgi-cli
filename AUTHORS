@@ -1,0 +1,11 @@
+This file lists people who have made significant contributions to hdlgi-cli.
+-----------------------------------------------------------------------------
+
+Imanol-Mikel Barba Sabariego <imanol@imanolbarba.net>
+	* Original program author. Refactored code from the original HDL Game Installer
+	  client into this project for the following functionality: ISO9660 images, OSD,
+	  HDLGI protocol.
+
+Woon Yung <ysai187@yahoo.com>
+	* Author of the original HDL Game Installer, from which this program is based:
+	  (https://sites.google.com/view/ysai187/home/projects/hdlgameinstaller)
