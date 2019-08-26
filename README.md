@@ -2,6 +2,8 @@
 UNIX version of sp193's HDLGameInstaller tool based on CLI
 Original Project: https://sites.google.com/view/ysai187/home/projects/hdlgameinstaller
 
+Compiles in GNU/Linux and macOS (maybe on some other BSDs too)
+
 ## --help
 ```
 ./cmake-build-debug/hdlgi-cli ACTION <action arguments> -H <IP address> | [-h --help | -v --version]
