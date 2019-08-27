@@ -40,7 +40,7 @@ HDLGIInstance::HDLGIInstance(std::string ip) : conn(ip)
 
     if((result = conn.prepareDataConnection(&(this->serverSocket))) != SUCCESS)
     {
-        if(result == INVALID_VERSION) {throw std::runtime_error("Error connecting to HDLGI. bind() failed");}
+        if(result == INVALID_SOCKET) {throw std::runtime_error("Error connecting to HDLGI. bind() failed");}
         throw std::runtime_error("Error preparing data connection. listen() returned: " + std::to_string(result));
     }
 }

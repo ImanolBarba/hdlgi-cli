@@ -42,26 +42,28 @@ enum paramIndex
     TITLE,
     IMAGE,
     OUTPUT,
-    DISCID
+    DISCID,
+    OVERWRITE
 };
 
 static struct option longopts[] = {
-    { "newtitle",  required_argument,            NULL,           NEWTITLE },
-    { "osd1",      required_argument,            NULL,           OSD1     },
-    { "osd2",      required_argument,            NULL,           OSD2     },
-    { "type",      required_argument,            NULL,           TYPE     },
-    { "compat",    required_argument,            NULL,           COMPAT   },
-    { "icon-src",  required_argument,            NULL,           ICONSRC  },
-    { "icon-path", required_argument,            NULL,           ICONPATH },
-    { "use-mdma0", required_argument,            NULL,           MDMA0    },
-    { "title",     required_argument,            NULL,           TITLE    },
-    { "image",     required_argument,            NULL,           IMAGE    },
-    { "output",    required_argument,            NULL,           OUTPUT   },
-    { "discid",    required_argument,            NULL,           DISCID   },
-    { "host",      required_argument,            NULL,           'H'      },
-    { "help",      no_argument,                  NULL,           'h'      },
-    { "version",   no_argument,                  NULL,           'v'      },
-    { NULL,        0,                            NULL,           UNKNOWN  }
+    { "newtitle",  required_argument,            NULL,           NEWTITLE  },
+    { "osd1",      required_argument,            NULL,           OSD1      },
+    { "osd2",      required_argument,            NULL,           OSD2      },
+    { "type",      required_argument,            NULL,           TYPE      },
+    { "compat",    required_argument,            NULL,           COMPAT    },
+    { "icon-src",  required_argument,            NULL,           ICONSRC   },
+    { "icon-path", required_argument,            NULL,           ICONPATH  },
+    { "use-mdma0", no_argument,                  NULL,           MDMA0     },
+    { "title",     required_argument,            NULL,           TITLE     },
+    { "image",     required_argument,            NULL,           IMAGE     },
+    { "output",    required_argument,            NULL,           OUTPUT    },
+    { "discid",    required_argument,            NULL,           DISCID    },
+    { "host",      required_argument,            NULL,           'H'       },
+    { "help",      no_argument,                  NULL,           'h'       },
+    { "version",   no_argument,                  NULL,           'v'       },
+    { "overwrite", no_argument,                  NULL,           OVERWRITE },
+    { NULL,        0,                            NULL,           UNKNOWN   }
 };
 
 void printError(int code)
@@ -166,7 +168,7 @@ int downloadGame(HDLGIInstance& ps2, const char* identifier, const char* file)
     return FAILURE;
 }
 
-int installGame(HDLGIInstance& ps2, GameParameters& params, const char* file)
+int installGame(HDLGIInstance& ps2, GameParameters& params, const char* file, bool overwrite)
 {
     FILE* f = fopen(file,"rb");
     if(!f)
@@ -175,17 +177,6 @@ int installGame(HDLGIInstance& ps2, GameParameters& params, const char* file)
         return FAILURE;
     }
 
-    bool overwrite = false;
-    std::string choice = "";
-    while(true)
-    {
-        std::cout << "Overwrite game if it exists? (y/N): ";
-        std::getline(std::cin,choice);
-        if(choice == "") {break;} // Accept default choice
-        else if(choice == "y" || choice == "Y") {overwrite = true; break;}
-        else if(choice == "n" || choice == "N") {break;}
-    }
-    std::cout << std::endl;
     return ps2.installGame(file,params,overwrite);
 }
 
@@ -278,7 +269,7 @@ void printHelp(const char* argv, bool longVersion = true)
         std::cout << " install --title <\"Game title\"> --osd1 <\"OSD Line 1\"> --osd2 <\"OSD Line 2\">" << std::endl;
         std::cout << "         --type <CD|DVD> --compat=\"1,2,3,4,5,6,8\" " << std::endl;
         std::cout << "         --icon-src <default|gamesave|external --icon-path <path-to-gamesave>>" << std::endl;
-        std::cout << "         --use-mdma0 --image <path-to-iso>" << std::endl;
+        std::cout << "         --use-mdma0 --overwrite --image <path-to-iso>" << std::endl;
         std::cout << "    Installs the provided game ISO image into the console" << std::endl << std::endl;
 
         std::cout << " edit --newtitle <\"Game title\"> --osd1 <\"OSD Line 1\"> --osd2 <\"OSD Line 2\">" << std::endl;
@@ -373,6 +364,7 @@ int main(int argc, char **argv)
 
     bool updateIcon = false;
     bool mdma0 = false;
+    bool overwrite = false;
 
     while ((c = getopt_long(argNum, argvIndex, "H:hv", longopts, &longIndex)) != -1)
     {
@@ -423,6 +415,7 @@ int main(int argc, char **argv)
         else if(c == IMAGE) {arguments["image"] = optarg;}
         else if(c == OUTPUT) {arguments["output"] = optarg;}
         else if(c == DISCID) {arguments["discid"] = optarg;}
+        else if(c == OVERWRITE) {overwrite = true;}
         else
         {
             std::cerr << "Unrecognised argument: " << optarg << std::endl;
@@ -470,7 +463,7 @@ int main(int argc, char **argv)
                 return 1;
             }
             params.useMDMA0 = mdma0;
-            result = installGame(ps2,params,arguments["image"]);
+            result = installGame(ps2,params,arguments["image"],overwrite);
             printError(result);
         }
         else if(!strcmp(action,"edit"))
