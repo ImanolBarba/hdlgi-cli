@@ -170,14 +170,16 @@ int downloadGame(HDLGIInstance& ps2, const char* identifier, const char* file)
 
 int installGame(HDLGIInstance& ps2, GameParameters& params, const char* file, bool overwrite)
 {
+    int result;
     FILE* f = fopen(file,"rb");
     if(!f)
     {
         std::cerr << "Error opening file: " << strerror(errno) << std::endl;
         return FAILURE;
     }
-
-    return ps2.installGame(file,params,overwrite);
+    result = ps2.installGame(file, params, overwrite);
+    fclose(f);
+    return result;
 }
 
 int removeGame(HDLGIInstance& ps2, const char* identifier)

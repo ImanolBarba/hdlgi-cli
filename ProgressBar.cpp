@@ -119,6 +119,7 @@ void clearLines(unsigned int numLines)
         std::cout << spaces;
         std::cout << "\r";
     }
+    free(spaces);
 }
 
 ProgressBar::ProgressBar(std::wstring& gameName, size_t totalBytes) :

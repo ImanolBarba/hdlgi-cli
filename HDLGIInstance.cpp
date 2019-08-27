@@ -255,7 +255,8 @@ int HDLGIInstance::updateGameInstallationOSDResources(const char* partition, con
 
         if(result == SUCCESS && fileBuffers[OSD_ICON_SYS_INDEX] != nullptr)
         {
-            if((result = parseIconSysFile(convUTF8FromBytes((const char*)(uint8_t*)fileBuffers[OSD_ICON_SYS_INDEX]).c_str(), (unsigned int)resourceStats.lengths[OSD_ICON_SYS_INDEX], &iconSys))==0){
+            if((result = parseIconSysFile(convUTF8FromBytes((const char*)(uint8_t*)fileBuffers[OSD_ICON_SYS_INDEX]).c_str(), (unsigned int)resourceStats.lengths[OSD_ICON_SYS_INDEX], &iconSys)) == SUCCESS)
+            {
                 //Update icon sys file.
                 wcscpy(iconSys.title0, osd1);
                 wcscpy(iconSys.title1, osd2);
