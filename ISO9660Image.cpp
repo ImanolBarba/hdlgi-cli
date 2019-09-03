@@ -90,7 +90,7 @@ ISO9660Image::ISO9660Image(std::string path) : path(path)
         if((sectorBuff[0] == 0x01) && (!memcmp(&sectorBuff[1], "CD001", 5)))
         { /* The last sector of layer 0 is sector 16 of layer 1. */
             memcpy(&(this->DLDVDSectors), &sectorBuff[80], 4);
-            this->DLDVDSectors -= 16 * 2048; // Substracting the system area from the layer 1 count, this gives the exact number of
+            this->DLDVDSectors -= 16; // Substracting the system area from the layer 1 count, this gives the exact number of
                                              // sectors from the beginning of layer 1 (first sector after layer 0) to the end.
         }
         rewind(discImg);
