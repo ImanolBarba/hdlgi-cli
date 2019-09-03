@@ -90,19 +90,19 @@ ISO9660Image::ISO9660Image(std::string path) : path(path)
         if((sectorBuff[0] == 0x01) && (!memcmp(&sectorBuff[1], "CD001", 5)))
         { /* The last sector of layer 0 is sector 16 of layer 1. */
             memcpy(&(this->DLDVDSectors), &sectorBuff[80], 4);
+            this->DLDVDSectors -= 16 * 2048; // Substracting the system area from the layer 1 count, this gives the exact number of
+                                             // sectors from the beginning of layer 1 (first sector after layer 0) to the end.
         }
-        else
+        rewind(discImg);
+        fseek(discImg, 0, SEEK_END);
+        long imageSize = ftell(discImg);
+        if((sectorCount + DLDVDSectors) != (imageSize / ((sectorType == 0xFF) ? 2048 : 2352)))
         {
-            rewind(discImg);
-            fseek(discImg, 0, SEEK_END);
-            if(sectorCount != (ftell(discImg) / ((sectorType == 0xFF) ? 2048 : 2352)))
-            {
-                std::cerr << "The number of sectors indicated within the ISO9660 filesystem does not match the size of the disc image" << std::endl;
-                //There may be trailing data, so calculate the number of sectors based on the disc image file's size instead.
-                sectorCount = (uint32_t)fseek(discImg, 0, SEEK_END) / ((sectorType == 0xFF) ? 2048 : 2352);
-            }
-            rewind(discImg);
+            std::cerr << "The number of sectors indicated within the ISO9660 filesystem does not match the size of the disc image" << std::endl;
+            //There may be trailing data, so calculate the number of sectors based on the disc image file's size instead.
+            sectorCount = (uint32_t)imageSize / ((sectorType == 0xFF) ? 2048 : 2352);
         }
+        rewind(discImg);
     }
     free(sectorBuff);
 }
