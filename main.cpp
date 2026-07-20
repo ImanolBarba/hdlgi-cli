@@ -82,6 +82,8 @@ void printError(int code)
         case GAME_EXISTS:
             std::cerr << "Game is already installed" << std::endl;
             break;
+        default:
+            std::cerr << strerror(-code) << std::endl;
     }
 }
 
